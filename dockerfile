@@ -1,0 +1,14 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+# ⚙️ Dependências necessárias para compilar bcrypt
+RUN apk add --no-cache python3 make g++ \
+  && npm install \
+  && apk del python3 make g++
+
+COPY . .
+
+CMD ["npm", "run", "dev"]
