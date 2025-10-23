@@ -7,7 +7,11 @@ export async function login(req: Request, res: Response) {
   const { email, senha } = req.body;
 
   try {
-    const usuario = await prisma.usuario.findUnique({ where: { email } });
+    const usuario = await prisma.usuario.findUnique({
+      where: { email },
+      include: { oficina: true },
+    });
+
     if (!usuario) {
       return res.status(401).json({ message: "E-mail não encontrado." });
     }
@@ -22,16 +26,19 @@ export async function login(req: Request, res: Response) {
       email: usuario.email,
       nome: usuario.nome,
       tipo: usuario.tipo,
-      oficinaId: usuario.oficina_id,
+      oficinaId: usuario.oficina_id ?? 0,
     };
 
     const token = jwt.sign(usuarioPayload, process.env.JWT_SECRET!, {
       expiresIn: "7d",
     });
 
-    res.json({ token, usuario: usuarioPayload });
+    return res.json({
+      token,
+      usuario: usuarioPayload,
+    });
   } catch (err) {
     console.error("Erro no login:", err);
-    res.status(500).json({ message: "Erro interno ao autenticar." });
+    return res.status(500).json({ message: "Erro interno ao autenticar." });
   }
 }

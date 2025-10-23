@@ -6,7 +6,6 @@ export const CidadeService = {
 
     if (!nome || !uf) throw new Error("Nome e UF são obrigatórios.");
 
-    // Evita duplicidade de cidade/UF
     const existing = await prisma.cidade.findFirst({
       where: { nome: { equals: nome, mode: "insensitive" }, uf: uf.toUpperCase() },
     });

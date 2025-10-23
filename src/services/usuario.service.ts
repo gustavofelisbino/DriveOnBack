@@ -9,7 +9,7 @@ export const UsuarioService = {
     nome: string;
     tipo?: tipo_usuario;
     status?: status_usuario;
-    oficina_id: number; // relação direta obrigatória
+    oficina_id: number;
   }) {
     const { email, senha, nome, tipo = "gestoroficina", status = "ativo", oficina_id } = data;
 
