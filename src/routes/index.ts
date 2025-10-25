@@ -11,6 +11,7 @@ import cidadeRouter from "./cidade.routes";
 import servicosRouter from "./servicos.routes";
 import ordensRouter from "./ordens.routes"
 import pecasRouter from "./pecas.routes"
+import pagamentosRouter from "./pagamentos.routes"
 
 export const router = Router();
 
@@ -26,5 +27,6 @@ router.use("/cidade", cidadeRouter);
 router.use("/servicos", servicosRouter);
 router.use("/ordens", ordensRouter);
 router.use("/pecas", pecasRouter);
+router.use("/pagamentos", pagamentosRouter);
 
 export default router;

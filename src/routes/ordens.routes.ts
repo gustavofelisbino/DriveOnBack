@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { OrdensService } from "../services/ordens.service";
+import { PdfHtmlService } from "../services/pdfservice.service";
 
 const router = Router();
 
@@ -22,6 +23,15 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/:id/pdf", async (req, res) => {
+  try {
+    await PdfHtmlService.gerarOrdemServicoPDF(Number(req.params.id), res);
+  } catch (err: any) {
+    console.error("Erro ao gerar PDF:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post("/", async (req, res) => {
   try {
     const nova = await OrdensService.create(req.body);
@@ -34,7 +44,10 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   try {
-    const atualizada = await OrdensService.update(Number(req.params.id), req.body);
+    const atualizada = await OrdensService.update(
+      Number(req.params.id),
+      req.body
+    );
     res.json(atualizada);
   } catch (err: any) {
     res.status(500).json({ error: err.message });

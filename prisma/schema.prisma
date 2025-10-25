@@ -1,6 +1,6 @@
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  binaryTargets = ["native", "windows", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -22,8 +22,7 @@ model usuario {
   funcionario_id Int?         @unique
   funcionario    funcionario? @relation("FuncionarioUsuario")
 
-  cliente cliente? @relation("UsuarioCliente")
-
+  cliente        cliente? @relation("UsuarioCliente")
   gestor_oficina oficina? @relation("GestorOficina")
 
   created_at DateTime @default(now())
@@ -46,8 +45,9 @@ model cliente {
   oficina oficina? @relation(fields: [oficina_id], references: [id])
   usuario usuario? @relation("UsuarioCliente", fields: [usuario_id], references: [id])
 
-  ordens   ordem_servico[]
-  veiculos veiculo[]
+  ordens     ordem_servico[]
+  veiculos   veiculo[]
+  pagamentos pagamento[]
 }
 
 model oficina {
@@ -74,6 +74,7 @@ model oficina {
   servicos       servico[]
   estoque_itens  estoque[]
   compras        compra_peca[]
+  pagamentos     pagamento[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -133,7 +134,8 @@ model ordem_servico {
   oficina     oficina     @relation(fields: [oficina_id], references: [id])
   veiculo     veiculo     @relation(fields: [veiculo_id], references: [id])
 
-  itens item_ordem_servico[]
+  itens      item_ordem_servico[]
+  pagamentos pagamento[]
 }
 
 model item_ordem_servico {
@@ -148,7 +150,7 @@ model item_ordem_servico {
   created_at       DateTime     @default(now())
   updated_at       DateTime     @updatedAt
 
-  ordem_servico    ordem_servico @relation(fields: [ordem_servico_id], references: [id], onDelete: Cascade)
+  ordem_servico ordem_servico @relation(fields: [ordem_servico_id], references: [id], onDelete: Cascade)
   servico       servico?      @relation(fields: [servico_id], references: [id])
   peca          peca?         @relation(fields: [peca_id], references: [id])
 }
@@ -166,9 +168,10 @@ model fornecedor {
   cep         String?
   cidade_id   Int?
 
-  cidade  cidade?       @relation(fields: [cidade_id], references: [id])
-  oficina oficina       @relation(fields: [oficina_id], references: [id])
-  compras compra_peca[]
+  cidade     cidade?       @relation(fields: [cidade_id], references: [id])
+  oficina    oficina       @relation(fields: [oficina_id], references: [id])
+  compras    compra_peca[]
+  pagamentos pagamento[]
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -245,6 +248,29 @@ model compra_peca {
   peca       peca       @relation(fields: [peca_id], references: [id])
 }
 
+model pagamento {
+  id               Int              @id @default(autoincrement())
+  cliente_id       Int
+  oficina_id       Int
+  ordem_servico_id Int?
+  fornecedor_id    Int?
+  tipo             tipo_pagamento
+  metodo           metodo_pagamento
+  valor            Decimal
+  status           status_pagamento
+  data_vencimento  DateTime
+  data_pagamento   DateTime?
+  observacao       String?
+
+  cliente       cliente        @relation(fields: [cliente_id], references: [id])
+  oficina       oficina        @relation(fields: [oficina_id], references: [id])
+  ordem_servico ordem_servico? @relation(fields: [ordem_servico_id], references: [id])
+  fornecedor    fornecedor?    @relation(fields: [fornecedor_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
 enum cargo_funcionario {
   mecanico
   atendente
@@ -275,4 +301,23 @@ enum status_usuario {
   ativo
   inativo
   bloqueado
+}
+
+enum tipo_pagamento {
+  pagar // contas a pagar (saída)
+  receber // contas a receber (entrada)
+}
+
+enum status_pagamento {
+  pendente
+  pago
+  cancelado
+}
+
+enum metodo_pagamento {
+  dinheiro
+  pix
+  cartao
+  boleto
+  transferencia
 }
