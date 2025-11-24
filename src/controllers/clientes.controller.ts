@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { ClienteService } from "../services/clientes.service";
+import { ClienteService } from "../services/clientes.service.js";
 
 export const clienteController = {
+  
   async listar(req: Request, res: Response) {
     try {
       const oficinaId = req.query.oficina_id
@@ -66,4 +67,17 @@ export const clienteController = {
       res.status(500).json({ error: err.message });
     }
   },
+
+  async listarVeiculosDoCliente(req: Request, res: Response) {
+    try {
+      const clienteId = Number(req.params.clienteId);
+  
+      const veiculos = await ClienteService.listarVeiculosDoCliente(clienteId);
+  
+      return res.json(veiculos);
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: "Erro ao buscar veículos do cliente" });
+    }
+  }  
 };

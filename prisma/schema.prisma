@@ -48,6 +48,7 @@ model cliente {
   ordens     ordem_servico[]
   veiculos   veiculo[]
   pagamentos pagamento[]
+  orcamentos orcamento[]
 }
 
 model oficina {
@@ -113,6 +114,7 @@ model veiculo {
 
   cliente cliente         @relation(fields: [cliente_id], references: [id])
   ordens  ordem_servico[]
+  orcamentos orcamento[]
 }
 
 model ordem_servico {
@@ -320,4 +322,27 @@ enum metodo_pagamento {
   cartao
   boleto
   transferencia
+}
+
+model orcamento {
+  id         Int       @id @default(autoincrement())
+  descricao  String
+  valor      Decimal
+  data       DateTime
+  status     status_orcamento @default(analise)
+
+  cliente_id Int
+  veiculo_id Int
+
+  cliente cliente @relation(fields: [cliente_id], references: [id])
+  veiculo veiculo @relation(fields: [veiculo_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+enum status_orcamento {
+  analise
+  aprovado
+  recusado
 }

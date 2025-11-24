@@ -88,4 +88,11 @@ export const ClienteService = {
 
     await prisma.cliente.delete({ where: { id } });
   },
+
+  listarVeiculosDoCliente(clienteId: number) {
+    return prisma.veiculo.findMany({
+      where: { cliente_id: clienteId },
+      orderBy: { id: "desc" }
+    });
+  }  
 };

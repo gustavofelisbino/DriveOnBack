@@ -25,3 +25,4 @@ services:
       - db
     environment:
       DATABASE_URL: "postgresql://postgres:1234@db:5432/driveon?schema=public"
+      JWT_SECRET: "minha_super_senha_jwt"
