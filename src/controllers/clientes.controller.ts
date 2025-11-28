@@ -9,7 +9,11 @@ export const clienteController = {
         ? Number(req.query.oficina_id)
         : undefined;
 
-      const clientes = await ClienteService.listar(oficinaId);
+      const search = req.query.search
+        ? String(req.query.search)
+        : "";
+
+      const clientes = await ClienteService.listar(oficinaId, search);
       res.json(clientes);
     } catch (err: any) {
       console.error("Erro ao listar clientes:", err);
@@ -71,13 +75,11 @@ export const clienteController = {
   async listarVeiculosDoCliente(req: Request, res: Response) {
     try {
       const clienteId = Number(req.params.clienteId);
-  
       const veiculos = await ClienteService.listarVeiculosDoCliente(clienteId);
-  
       return res.json(veiculos);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: "Erro ao buscar veículos do cliente" });
     }
-  }  
+  }
 };

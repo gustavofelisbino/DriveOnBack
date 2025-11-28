@@ -9,8 +9,21 @@ type ClienteInput = {
 };
 
 export const ClienteService = {
-  async listar(oficinaId?: number) {
-    const where = oficinaId ? { oficina_id: oficinaId } : {};
+
+  async listar(oficinaId?: number, search: string = "") {
+    const where: any = {};
+
+    if (oficinaId) {
+      where.oficina_id = oficinaId;
+    }
+
+    if (search.trim().length > 0) {
+      where.OR = [
+        { nome: { contains: search, mode: "insensitive" } },
+        { email: { contains: search, mode: "insensitive" } },
+        { telefone: { contains: search, mode: "insensitive" } },
+      ];
+    }
 
     return await prisma.cliente.findMany({
       where,
@@ -68,7 +81,7 @@ export const ClienteService = {
     const cliente = await prisma.cliente.findUnique({ where: { id } });
     if (!cliente) throw new Error("Cliente não encontrado.");
 
-    return await prisma.cliente.update({
+    return prisma.cliente.update({
       where: { id },
       data: {
         nome: data.nome,
@@ -94,5 +107,5 @@ export const ClienteService = {
       where: { cliente_id: clienteId },
       orderBy: { id: "desc" }
     });
-  }  
+  }
 };

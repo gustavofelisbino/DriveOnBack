@@ -13,6 +13,7 @@ import ordensRouter from "./ordens.routes.js";
 import pecasRouter from "./pecas.routes.js";
 import pagamentosRouter from "./pagamentos.routes.js";
 import orcamentosRouter from "./orcamentos.routes.js";
+import agendamentosRouter from "./agendamento.routes.js";
 
 export const router = Router();
 
@@ -30,5 +31,6 @@ router.use("/ordens", ordensRouter);
 router.use("/pecas", pecasRouter);
 router.use("/pagamentos", pagamentosRouter);
 router.use("/orcamentos", orcamentosRouter);
+router.use("/agendamentos", agendamentosRouter);
 
 export default router;

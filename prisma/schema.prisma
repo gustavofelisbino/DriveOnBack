@@ -346,3 +346,15 @@ enum status_orcamento {
   aprovado
   recusado
 }
+
+model Agendamento {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  start       DateTime
+  end         DateTime
+  location    String?
+  oficina_id  Int
+
+  @@map("agendamentos")
+}
